@@ -1,4 +1,4 @@
-package com.facbrito.cursomc.service.exception;
+package com.facbrito.cursomc.controller.exception;
 
 import java.io.Serializable;
 
