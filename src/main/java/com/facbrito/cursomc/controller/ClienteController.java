@@ -1,5 +1,6 @@
 package com.facbrito.cursomc.controller;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,14 +12,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.facbrito.cursomc.domain.Cliente;
 import com.facbrito.cursomc.dto.ClienteDTO;
+import com.facbrito.cursomc.dto.ClienteNewDTO;
 import com.facbrito.cursomc.service.ClienteService;
 
 @RestController
@@ -32,6 +36,15 @@ public class ClienteController {
 	public ResponseEntity<Cliente> find(@PathVariable Integer id) {
 		Cliente cliente = clienteService.find(id);
 		return ResponseEntity.ok().body(cliente);
+	}
+
+	@PostMapping
+	public ResponseEntity<?> insert(@Valid @RequestBody ClienteNewDTO clienteNewDTO) {
+		Cliente cliente = clienteService.fromDTO(clienteNewDTO);
+		cliente = clienteService.insert(cliente);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(cliente.getId())
+				.toUri();
+		return ResponseEntity.created(uri).build();
 	}
 
 	@PutMapping(value = "/{id}")
