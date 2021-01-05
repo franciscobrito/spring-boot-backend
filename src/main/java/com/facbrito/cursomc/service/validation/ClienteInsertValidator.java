@@ -16,10 +16,10 @@ import com.facbrito.cursomc.repository.ClienteRepository;
 import com.facbrito.cursomc.service.validation.utils.BR;
 
 public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO> {
-
-	@Autowired
-	private ClienteRepository repo;
 	
+	@Autowired
+	private ClienteRepository clienteRepository;
+
 	@Override
 	public void initialize(ClienteInsert ann) {
 	}
@@ -35,6 +35,11 @@ public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert
 		
 		if (clienteDTO.getTipo().equals(TipoCliente.PESSOAJURIDICA.getCodigo()) && !BR.isValidCNPJ(clienteDTO.getCpfOuCnpj())) {
 			list.add(new FieldMessage("cpfOuCnpj", "CNPJ inválido"));
+		}
+		
+		Cliente aux = clienteRepository.findByEmail(clienteDTO.getEmail());
+		if(aux != null) {
+			list.add(new FieldMessage("email", "Email já existente"));
 		}
 
 		for (FieldMessage e : list) {
